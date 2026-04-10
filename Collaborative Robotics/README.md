@@ -1,4 +1,7 @@
-# Dobot Arm Python Files
+# Collaborative Robotic Arm Folders
+
+## Must Read: Robot Arm Safety Training
+Please read through the safety operation procedue in here [insert link] before operating the provide robot arm. Failure to do so may result in personal property damange or even injuries.
 
 ## Usage
 
