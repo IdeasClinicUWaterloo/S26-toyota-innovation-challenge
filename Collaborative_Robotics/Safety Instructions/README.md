@@ -9,11 +9,11 @@ Dobot Magician arm is capable in movin in the following highlighted areas. Befor
 ![FOV picture](<./25392_dobot range of motion.jpg>)
 
 ## Software Setup:
-1. Download the Dobot Link and Dobot Lab from the [here](https://www.dobot.us/download-center/)
-2. Follow the instruction in the download files. However, for each "install" button you must click install and let the installation run 3 times for the software to fully install.
-3. A successful installation of Dobot Link should look like a tiny icon in your tray, and Dobot Lab should be a launchable app
-4. to launch dobotlink: pull up the application's icon in the tray, click and select "launch developer interface," then select "device test." In the connect row, select your robot arm and connect
-5. to launch dobotlab: launch the application, then select the tab with the Python logo. Click the conenct button on top of that interface
+1. Download the [Dobot Link](https://uofwaterloo-my.sharepoint.com/:u:/g/personal/mstachow_uwaterloo_ca/IQCMyzfbytafTpc4qCPQD6YwAbgJf8-Cn81QLpLcJRNMF0o?e=Ff2Rbj) and [Dobot Lab](https://uofwaterloo-my.sharepoint.com/:u:/g/personal/mstachow_uwaterloo_ca/IQBbYKSMl_JLSITR646OPVyuAQqpUINluDmnRVfS9tAhdjM?e=zsudQp)
+2. Follow the instruction in the download files. For each "install" button you must click install and let the installation run 3 times for the software to fully install.
+3. Lanch the two apps after installation: Dobot Link shoud appear as an icon in tray, and dobot lab should be directly launchable
+4. To launch dobotlink: pull up the application's icon in the tray, click and select "launch developer interface," then select "device test." In the connect row, select your robot arm and connect
+5. To launch dobotlab: launch the application, then select the tab with the Python logo. Click the conenct button on top of that interface
 
 ## Common Protocols for Robot Malfunction (Please be prepared to perform any of the steps below as soon as troubek starts)
 ### Locate the Following Emergency Switch Locations
