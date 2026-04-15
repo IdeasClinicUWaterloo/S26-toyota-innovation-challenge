@@ -2,9 +2,9 @@
 ## Challenge Overview
 Robotics are growing increasingly common in manufacturing/warehouse settings to assist humans with various tasks. Traditionally, robots are in cages where human workers must stay out of during their operation. Toyota would like to take an innovative approach, where production workers and robots collaborate to achieve productivity boosts on their factory floor. This means that the robot and the human worker will be working on the same task but handling different parts of the task. 
 
-You are tasked with designing the control of a desktop robotic arm that resembles a scaled-down version of a high torque arm found in TMMC, to work along with humans to achieve automative assembly tasks. The robot should consider efficiency, safety of users around it, as well as the comfortability of the users who interact with the robots.  
+You are tasked with designing the control of a desktop robotic arm that resembles a scaled-down version of a high torque arm found in TMMC, to work along with humans to achieve automative assembly tasks. Engineers at TMMC have already enabled the robot arm to complete a pick-and-place motion according to human actions. Your role is to continue developing this function to achieve more robot collaboration capabilities. The robot should consider efficiency, the safety of users around it, as well as the comfort of the users who interact with the robots.  
 
-### Potential Solutions: 
+## Potential Solutions: 
 
 - Robot that places parts delivered by human worker into the correct assembly position  
 - Robot arm that allows teleoperation or hand mimicry 
@@ -12,7 +12,15 @@ You are tasked with designing the control of a desktop robotic arm that resemble
 - Safety feature or human collision avoidance mechanism  
 - Friendly robot: social robot-human interaction
 
-## Kit Introduction:
+
+## Recommend Area of Development: 
+
+The following directions can be a starting direction for your development. You are not just limited to these focuses; feel free to create something that has not been mentioned in the following list.
+- Vision/Perception: improve the current computer vision to achieve the detection of the car parts
+- Human-machine interface: add in functions to detect worker's hand motions and steer robot away
+- tbc
+
+## Starter Material Introduction:
 Each team will be provided with the following equipment: 
 1. A Dobot Magician arm with a gripper at the tip
 2. A Orbbec camera
