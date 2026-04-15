@@ -18,7 +18,7 @@ A simple test setup to measure current draw of a 5V DC motor using a low-side sh
 
 ## Circuit Overview
 
-**INSERT IMAGE**
+![Circuit Schematic](/Fault_Prediction/MotorStallTestSetup/circuit_schematic.png)
 
 **Key Notes:**
 
@@ -71,6 +71,8 @@ Open `saveValues.py`
 
 - CSV file with timestamped current measurements
 - Real-time plot (if enabled in script)
+
+Note: Data is transmitted in batches of 500 samples. During transmission over UART, sampling is temporarily paused, resulting in gaps in the recorded timestamps between batches. These gaps appear as sudden jumps in time in the plotted data.
 
 ---
 
