@@ -1,84 +1,194 @@
-# Autonomous Fleets Starter Code Guide
+# Autonomous Fleets
 
-This starter code is a small fleet-management stack for PRIZM-based mobile robots. It is built around one central computer running the arbiter GUI, one laptop per robot running the client bridge, and robot firmware that receives serial commands and reports telemetry.
+## Challenge Description
 
-## System Architecture
+Modern factories and warehouses increasingly rely on fleets of mobile robots to move material, support assembly, and reduce wasted motion. The challenge in this track is not just making one robot move, but coordinating multiple robots safely and predictably in a shared workspace.
 
-```text
-Operator computer
-  central-arbiter.py
-  gui.py
-        |
-        | newline-delimited JSON over TCP
-        v
-Robot laptop
-  client.py
-        |
-        | newline-delimited JSON or compact control opcodes over serial
-        v
-PRIZM robot controller
-  telemetry_and_communicate_to_aribiter.ino
-```
+Students are invited to build autonomy, coordination, and fleet-management features for a small robotics testbed. Solutions can focus on robot-to-robot coordination, task allocation, path planning, operator tooling, safety behaviors, or telemetry-driven monitoring.
 
-The system intentionally keeps the protocol simple. Every normal message is a single JSON object followed by a newline. The laptop bridge reads complete lines from one side, validates or compresses them when needed, and forwards them to the other side.
+## Potential Solutions
 
-## Main Pieces
+- Multi-robot path planning and collision avoidance
+- Fleet dispatching or centralized task arbitration
+- Telemetry dashboards for operators and judges
+- Safety logic using ultrasonic or other onboard sensors
+- Smarter pickup, drop-off, or gripper control workflows
+- Reliability improvements for command handling and robot recovery
 
-- `python-scripts/central-arbiter.py` is the server process. It accepts robot laptop connections, tracks connected robots, updates the GUI, and sends commands back to robots.
-- `python-scripts/gui.py` is the Tkinter and Matplotlib operator interface. It displays robot telemetry and sends manual or test-path commands through the arbiter.
-- `python-scripts/client.py` runs on the robot laptop. It connects TCP to the arbiter and serial to the PRIZM controller.
-- `python-scripts/messages.py` defines Python dataclasses for the shared message shapes used by the GUI and arbiter.
-- `testing-bot-controls/testing-bot-controls.ino` is a simple manual-control sketch for checking motors and the gripper.
-- `testing-bot-controls/telemetry_and_communicate_to_aribiter/telemetry_and_communicate_to_aribiter.ino` is the fuller robot sketch for telemetry, waypoint execution, and arbiter communication.
+## Suggested Milestones
 
-## Typical Run Order
+Teams are encouraged to take the project in any direction. These milestones are not requirements or a scoring checklist; they are meant to give less experienced teams a practical path from "the robot moves" to "we built a fleet behavior." Advanced teams can skip, combine, or replace them with their own plan.
 
-1. Copy `.env.example` to `.env` on the robot laptop.
-2. Set `SERVER_HOST_IP_ADDRESS` to the arbiter computer's IP address.
-3. Set `LOCAL_SERIAL_PORT` to the PRIZM serial port, such as `COM5`.
-4. Set a unique `ROBOT_ID` for each robot, such as `robot_A` or `robot_B`.
-5. Install the Python requirements in `python-scripts/requirements.txt`.
-6. Upload the telemetry Arduino sketch to the robot controller.
-7. Start `python-scripts/central-arbiter.py` on the operator computer.
-8. Start `python-scripts/client.py` on each robot laptop.
-9. Use the GUI to inspect telemetry, send test paths, pause, resume, stop, or toggle the gripper.
+### Milestone 1: Make One Robot Reliable
 
-## Runtime Data Flow
+Goal: prove that one robot can be controlled predictably.
 
-Startup:
+Suggested outcomes:
 
-1. The arbiter opens a TCP server on port `9000`.
-2. A robot laptop opens its serial port and connects to the arbiter.
-3. The client sends a `hello` message with its `robot_id`.
-4. The arbiter binds that TCP session to the robot ID and starts displaying future telemetry for that robot.
+- Upload a working Arduino sketch to one robot
+- Confirm forward, backward, left, right, stop, and gripper commands
+- Tune motor directions, speed values, and servo positions
+- Establish a safe emergency stop or timeout behavior
 
-Telemetry:
+Good demo: one robot can be manually controlled without drifting into unsafe behavior when commands stop.
 
-1. The Arduino sketch periodically prints a `telemetry` JSON line.
-2. The client reads it from serial.
-3. The client forwards it to the arbiter over TCP.
-4. The arbiter stores the latest telemetry and calls `TelemetryGUI.update_robot`.
+### Milestone 2: Connect Robot Telemetry
 
-Commands:
+Goal: make the robot visible to the software stack.
 
-1. The GUI builds a command message, usually using classes from `messages.py`.
-2. The arbiter sends the message to the selected robot session.
-3. The client forwards the message to serial.
-4. The Arduino sketch handles the command and prints acknowledgements, status updates, and path events.
+Suggested outcomes:
 
-## Important Assumptions
+- Start the central arbiter and robot client
+- Send telemetry from the robot to the dashboard
+- Display robot ID, state, pose, path progress, and sensor readings
+- Verify that pause, resume, stop, and gripper commands travel from the GUI to the robot
 
-- Coordinates are in centimeters.
-- The arena used by the GUI and coordinated traversal is `400 cm x 400 cm`.
-- The grid planner uses `10 cm` cells, so the arena becomes a `40 x 40` grid.
-- Each robot ID must be unique while connected to the arbiter.
-- The advanced robot sketch starts with an initial pose of `x=200 cm`, `y=100 cm`, and `theta=90 degrees`. Change those values before testing if the physical robot starts somewhere else.
+Good demo: the dashboard updates while the robot moves, and GUI commands affect the physical robot.
 
-## Where To Extend
+### Milestone 3: Execute A Simple Autonomous Path
 
-- Add smarter path planning in `central-arbiter.py`.
-- Add more operator controls or richer visualizations in `gui.py`.
-- Add new message types in `messages.py`, then teach the arbiter, client, and firmware how to handle them.
-- Improve odometry or add sensor-based safety stops in the telemetry Arduino sketch.
-- Replace the simple one-waypoint-at-a-time sequencing with a richer reservation or traffic-management system.
+Goal: move from manual control to waypoint-based behavior.
 
+Suggested outcomes:
+
+- Send a straight-line path from the GUI
+- Send a turn-around or L-shaped path
+- Tune odometry constants such as wheel diameter and wheel base
+- Report path lifecycle events such as started, waypoint reached, and complete
+
+Good demo: one robot can drive to one or more target points and report progress back to the arbiter.
+
+### Milestone 4: Add Safety And Recovery
+
+Goal: make autonomy more robust when something goes wrong.
+
+Suggested outcomes:
+
+- Use ultrasonic or other sensor data to detect nearby obstacles
+- Pause, slow, reroute, or stop when the robot sees a hazard
+- Add recovery behavior after a failed command, blocked path, or lost connection
+- Make robot state understandable to operators through status messages or dashboard indicators
+
+Good demo: the robot reacts safely to an obstacle or failure instead of blindly continuing.
+
+### Milestone 5: Coordinate Multiple Robots
+
+Goal: demonstrate fleet behavior instead of independent single-robot control.
+
+Suggested outcomes:
+
+- Connect two or more robots with unique robot IDs
+- Prevent two robots from being assigned the same space at the same time
+- Add centralized task assignment, traffic rules, reservations, or route planning
+- Show each robot's current task and progress in the dashboard
+
+Good demo: two robots complete compatible tasks without colliding or blocking each other unnecessarily.
+
+### Milestone 6: Build Your Differentiator
+
+Goal: turn the starter system into your team's own solution.
+
+Possible directions:
+
+- Smarter dispatching: assign jobs based on distance, battery, load, or availability
+- Better autonomy: improve localization, path planning, obstacle avoidance, or task execution
+- Better operations: add logs, alerts, replay, maps, operator controls, or judge-friendly visualizations
+- Better hardware behavior: improve pickup/drop-off workflows, gripper reliability, or mechanical integration
+- Better resilience: handle disconnects, bad telemetry, stuck robots, and command retries
+
+Good demo: the project has a clear idea beyond the starter code and shows why that idea improves fleet operation.
+
+## Starter Package Overview
+
+This folder contains starter material for the student hackathon. It is intended as a base package that teams can extend during the event, not as a polished production system.
+
+### Included Components
+
+- `starter-code/python-scripts/central-arbiter.py`
+  Central laptop/server process that accepts robot connections, displays telemetry in a GUI, sends commands, and supports a two-robot coordinated traverse mode.
+- `starter-code/python-scripts/client.py`
+  Laptop-side bridge that connects one robot to the central arbiter over TCP and forwards commands to the robot over serial.
+- `starter-code/python-scripts/gui.py`
+  Telemetry dashboard with robot status, arena visualization, manual controls, test-path buttons, and grid-based coordination controls.
+- `starter-code/python-scripts/messages.py`
+  Shared message definitions for telemetry, path assignment, acknowledgements, pause/resume/stop, gripper toggle, and heartbeat messages.
+- `starter-code/testing-bot-controls/testing-bot-controls.ino`
+  Simple Arduino/PRIZM sketch for basic manual movement and gripper testing over serial commands.
+- `starter-code/testing-bot-controls/telemetry_and_communicate_to_aribiter/telemetry_and_communicate_to_aribiter.ino`
+  More complete robot sketch with odometry, waypoint execution, telemetry publishing, ultrasonic sensor readings, acknowledgements, and command handling.
+
+## Development Setup
+
+### Python Environment
+
+The Python starter code expects a local environment with the packages listed in `starter-code/python-scripts/requirements.txt`.
+
+Example workflow:
+
+1. Create a virtual environment
+2. Install the requirements
+3. Copy `starter-code/.env.example` to `.env`
+4. Update the values for your local machine and robot
+
+### Environment Variables
+
+The provided example environment file includes:
+
+- `SERVER_HOST_IP_ADDRESS`
+- `SERVER_PORT`
+- `LOCAL_SERIAL_PORT`
+- `SERIAL_BAUD`
+- `ROBOT_ID`
+- `CLIENT_NAME`
+
+These values control how each robot laptop connects to the central arbiter and which serial port is used to talk to the robot controller.
+
+## Suggested Workflow
+
+### 1. Load Robot Firmware
+
+Choose the Arduino sketch that matches your use case:
+
+- Use `testing-bot-controls.ino` for simple manual drive and gripper testing
+- Use `telemetry_and_communicate_to_aribiter.ino` for telemetry, waypoint following, and arbiter communication
+
+### 2. Start the Central Arbiter
+
+Run `starter-code/python-scripts/central-arbiter.py` on the machine acting as the server/operator station.
+
+The arbiter:
+
+- Listens for robot laptop connections on port `9000` by default
+- Displays robot telemetry in a Tkinter + Matplotlib dashboard
+- Tracks robot state, heartbeat, status, and path progress
+- Plans grid-based coordinated traverses for two robots in a `4 m x 4 m` arena represented as `40 x 40` cells at `10 cm` resolution
+
+### 3. Start a Robot Client
+
+Run `starter-code/python-scripts/client.py` on the laptop connected to a robot controller.
+
+The client:
+
+- Opens the configured serial port
+- Connects to the arbiter over TCP
+- Registers the robot with a `hello` message
+- Forwards robot telemetry upstream
+- Relays path, stop, pause, resume, and gripper commands back to the robot
+
+### 4. Test and Extend
+
+From the GUI you can already:
+
+- Pause, resume, or stop a robot
+- Toggle the gripper
+- Send straight-line, turn-around, and L-shaped test paths
+- Launch a coordinated two-robot traverse using goal cells in the arena grid
+
+Teams can build on this foundation by improving localization, obstacle handling, scheduling logic, fleet behaviors, operator interfaces, or robot hardware integration.
+
+## Notes for Teams
+
+- The included code assumes a shared communication protocol based on newline-delimited JSON messages
+- The more advanced robot sketch publishes telemetry including pose and ultrasonic distances
+- The starter package currently provides basic coordination logic and operator tooling, but leaves substantial room for student innovation
+- If you change robot geometry, motor behavior, or sensor layout, you should review the constants in the Arduino sketch before testing
