@@ -15,6 +15,89 @@ Students are invited to build autonomy, coordination, and fleet-management featu
 - Smarter pickup, drop-off, or gripper control workflows
 - Reliability improvements for command handling and robot recovery
 
+## Suggested Milestones
+
+Teams are encouraged to take the project in any direction. These milestones are not requirements or a scoring checklist; they are meant to give less experienced teams a practical path from "the robot moves" to "we built a fleet behavior." Advanced teams can skip, combine, or replace them with their own plan.
+
+### Milestone 1: Make One Robot Reliable
+
+Goal: prove that one robot can be controlled predictably.
+
+Suggested outcomes:
+
+- Upload a working Arduino sketch to one robot
+- Confirm forward, backward, left, right, stop, and gripper commands
+- Tune motor directions, speed values, and servo positions
+- Establish a safe emergency stop or timeout behavior
+
+Good demo: one robot can be manually controlled without drifting into unsafe behavior when commands stop.
+
+### Milestone 2: Connect Robot Telemetry
+
+Goal: make the robot visible to the software stack.
+
+Suggested outcomes:
+
+- Start the central arbiter and robot client
+- Send telemetry from the robot to the dashboard
+- Display robot ID, state, pose, path progress, and sensor readings
+- Verify that pause, resume, stop, and gripper commands travel from the GUI to the robot
+
+Good demo: the dashboard updates while the robot moves, and GUI commands affect the physical robot.
+
+### Milestone 3: Execute A Simple Autonomous Path
+
+Goal: move from manual control to waypoint-based behavior.
+
+Suggested outcomes:
+
+- Send a straight-line path from the GUI
+- Send a turn-around or L-shaped path
+- Tune odometry constants such as wheel diameter and wheel base
+- Report path lifecycle events such as started, waypoint reached, and complete
+
+Good demo: one robot can drive to one or more target points and report progress back to the arbiter.
+
+### Milestone 4: Add Safety And Recovery
+
+Goal: make autonomy more robust when something goes wrong.
+
+Suggested outcomes:
+
+- Use ultrasonic or other sensor data to detect nearby obstacles
+- Pause, slow, reroute, or stop when the robot sees a hazard
+- Add recovery behavior after a failed command, blocked path, or lost connection
+- Make robot state understandable to operators through status messages or dashboard indicators
+
+Good demo: the robot reacts safely to an obstacle or failure instead of blindly continuing.
+
+### Milestone 5: Coordinate Multiple Robots
+
+Goal: demonstrate fleet behavior instead of independent single-robot control.
+
+Suggested outcomes:
+
+- Connect two or more robots with unique robot IDs
+- Prevent two robots from being assigned the same space at the same time
+- Add centralized task assignment, traffic rules, reservations, or route planning
+- Show each robot's current task and progress in the dashboard
+
+Good demo: two robots complete compatible tasks without colliding or blocking each other unnecessarily.
+
+### Milestone 6: Build Your Differentiator
+
+Goal: turn the starter system into your team's own solution.
+
+Possible directions:
+
+- Smarter dispatching: assign jobs based on distance, battery, load, or availability
+- Better autonomy: improve localization, path planning, obstacle avoidance, or task execution
+- Better operations: add logs, alerts, replay, maps, operator controls, or judge-friendly visualizations
+- Better hardware behavior: improve pickup/drop-off workflows, gripper reliability, or mechanical integration
+- Better resilience: handle disconnects, bad telemetry, stuck robots, and command retries
+
+Good demo: the project has a clear idea beyond the starter code and shows why that idea improves fleet operation.
+
 ## Starter Package Overview
 
 This folder contains starter material for the student hackathon. It is intended as a base package that teams can extend during the event, not as a polished production system.
