@@ -17,7 +17,7 @@ This challenge invites students to design and develop intelligent systems aimed 
 
 Machine Learning (ML) is a way to build programs that learn patterns from data instead of being explicitly programmed with rules. In this challenge, you can use ML to analyze machine telemetry and predict failures before they happen.
 
-If you’re comfortable with Python, you already have everything you need to get started. The process can be broken into a few simple steps:
+The process can be broken into a few simple steps:
 
 #### 1. Choose a Problem and Dataset
 
@@ -43,7 +43,7 @@ Real-world data is often messy. You will likely need to:
 
 - Handle missing or incorrect values
 - Normalize or scale features (e.g., temperature, current)
-  Select relevant features for your model
+- Select relevant features for your model
 
 This step is critical - good data preparation often matters more than the model itself.
 
@@ -55,7 +55,7 @@ Use your cleaned dataset to train the model:
 - Train on the training set
 - Evaluate performance on unseen data
 
-Python libraries like `scikit-learn`, `pandas`, and `numpy` are commonly used here.
+Python libraries like `scikit-learn` and `PyTorch` are commonly used here.
 
 #### 5. Display and Interpret Results
 
