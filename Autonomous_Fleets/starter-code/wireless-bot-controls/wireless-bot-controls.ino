@@ -73,7 +73,7 @@ int drive_speed_deg_per_sec = 200;
 // ==============================
 // Serial receive buffer
 // ==============================
-const int SERIAL_LINE_BUFFER_SIZE = 256;
+const int SERIAL_LINE_BUFFER_SIZE = 512;
 char serialLineBuffer[SERIAL_LINE_BUFFER_SIZE];
 uint8_t serialLineLength = 0;
 
@@ -184,6 +184,12 @@ void broadcastPrintLn(const __FlashStringHelper *msg)
     espSerial.println(msg);
 }
 
+void broadcastPrintULong(unsigned long val)
+{
+    Serial.print(val);
+    espSerial.print(val);
+}
+
 // ==============================
 // Odometry
 // ==============================
@@ -230,7 +236,7 @@ void maybeUpdateSensors()
     if (Serial.available() > 0 || espSerial.available() > 0)
         return;
 
-    cached_left_ultrasonic_cm = prizm.readSonicSensorCM(2);
+    cached_left_ultrasonic_cm = prizm.readSonicSensorCM(5);
     cached_front_ultrasonic_cm = prizm.readSonicSensorCM(4);
     lastSensorReadMs = now;
 }
@@ -256,7 +262,7 @@ void printPoseJSON()
     broadcastPrintInt(current_waypoint_index);
 
     broadcastPrint(F(",\"t_ms\":"));
-    broadcastPrintInt((int)t_ms);
+    broadcastPrintULong(t_ms);
 
     broadcastPrint(F(",\"x_cm\":"));
     broadcastPrintFloat(x_cm, 3);
@@ -506,7 +512,7 @@ void sendAck(const char *forType)
     broadcastPrint(F(",\"path_id\":"));
     broadcastPrintInt(current_path_id);
     broadcastPrint(F(",\"t_ms\":"));
-    broadcastPrintInt(millis());
+    broadcastPrintULong(millis());
     broadcastPrintLn(F("}"));
 }
 
@@ -527,7 +533,7 @@ void sendStatus(const char *state, const char *reason)
     broadcastPrint(reason);
     broadcastPrint(F("\""));
     broadcastPrint(F(",\"t_ms\":"));
-    broadcastPrintInt(millis());
+    broadcastPrintULong(millis());
     broadcastPrintLn(F("}"));
 }
 
@@ -540,7 +546,7 @@ void sendPathStarted()
     broadcastPrint(F(",\"path_id\":"));
     broadcastPrintInt(current_path_id);
     broadcastPrint(F(",\"t_ms\":"));
-    broadcastPrintInt(millis());
+    broadcastPrintULong(millis());
     broadcastPrintLn(F("}"));
 }
 
@@ -555,7 +561,7 @@ void sendWaypointReached()
     broadcastPrint(F(",\"waypoint_index\":"));
     broadcastPrintInt(current_waypoint_index);
     broadcastPrint(F(",\"t_ms\":"));
-    broadcastPrintInt(millis());
+    broadcastPrintULong(millis());
     broadcastPrint(F(",\"x_cm\":"));
     broadcastPrintFloat(x_cm, 3);
     broadcastPrint(F(",\"y_cm\":"));
@@ -574,7 +580,7 @@ void sendPathComplete()
     broadcastPrint(F(",\"path_id\":"));
     broadcastPrintInt(current_path_id);
     broadcastPrint(F(",\"t_ms\":"));
-    broadcastPrintInt(millis());
+    broadcastPrintULong(millis());
     broadcastPrint(F(",\"x_cm\":"));
     broadcastPrintFloat(x_cm, 3);
     broadcastPrint(F(",\"y_cm\":"));
@@ -594,8 +600,23 @@ void handlePathAssignment(const char *json)
 
     int newTurnSpeed = turn_speed_deg_per_sec;
     int newDriveSpeed = drive_speed_deg_per_sec;
-    extractIntField(json, "turn_speed_deg_per_sec", newTurnSpeed);
-    extractIntField(json, "drive_speed_deg_per_sec", newDriveSpeed);
+
+    if (!extractIntField(json, "turn_speed_deg_per_sec", newTurnSpeed))
+    {
+        const char *motionBlock = strstr(json, "\"motion\"");
+        if (motionBlock)
+        {
+            extractIntField(motionBlock, "turn_speed_deg_per_sec", newTurnSpeed);
+        }
+    }
+    if (!extractIntField(json, "drive_speed_deg_per_sec", newDriveSpeed))
+    {
+        const char *motionBlock = strstr(json, "\"motion\"");
+        if (motionBlock)
+        {
+            extractIntField(motionBlock, "drive_speed_deg_per_sec", newDriveSpeed);
+        }
+    }
 
     bool replaceExisting = true;
     extractBoolField(json, "replace_existing", replaceExisting);
