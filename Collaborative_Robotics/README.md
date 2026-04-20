@@ -16,9 +16,12 @@ You are tasked with designing the control of a desktop robotic arm that resemble
 ## Recommend Area of Development: 
 
 The following directions can be a starting direction for your development. You are not just limited to these focuses; feel free to create something that has not been mentioned in the following list.
-- Vision/Perception: improve the current computer vision to achieve the detection of the car parts
-- Human-machine interface: add in functions to detect worker's hand motions and steer robot away
-- tbc
+- **Vision/Perception**: improve the current computer vision to achieve the detection of the car parts
+- **Human-machine interface**: add in functions to detect worker's hand motions and steer robot away
+- **Machine Controls**: improvement for robotic arm to accurately pick up car parts and place it in the corresponding box
+- **Friendly Robots**: how should the robot behave to feel like a companion to workers instead of replacement
+- **More areas to discover**: what do you think the current robotic arm should accomplish to collaborate human workers
+  
 
 ## Starter Material Introduction:
 Each team will be provided with the following equipment: 
@@ -26,11 +29,12 @@ Each team will be provided with the following equipment:
 2. A Orbbec camera
 3. Camera Stand to mount camera
 
+# Introduction to Starter Script
 
-## Must Read: Robot Arm Set Up & Safety Training
+## Must Read Before Use: Robot Arm Set Up & Safety Training
 Please read through the safety operation procedure in [here](https://github.com/IdeasClinicUWaterloo/S26-toyota-innovation-challenge/tree/docs/Collaborative_Robotics/Safety%20Instructions) before operating the provided robot arm. Failure to do so may result in damage to personal property or even injuries.
 
-## Usage
+
 
 Refer to `testDobot.py` for basic Dobot control
 
