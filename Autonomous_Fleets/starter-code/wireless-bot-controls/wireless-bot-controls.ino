@@ -265,13 +265,13 @@ void printPoseJSON()
     broadcastPrintULong(t_ms);
 
     broadcastPrint(F(",\"x_cm\":"));
-    broadcastPrintFloat(x_cm, 3);
+    broadcastPrintFloat(x_cm, 2);
 
     broadcastPrint(F(",\"y_cm\":"));
-    broadcastPrintFloat(y_cm, 3);
+    broadcastPrintFloat(y_cm, 2);
 
     broadcastPrint(F(",\"theta_deg\":"));
-    broadcastPrintFloat(theta_deg, 3);
+    broadcastPrintFloat(theta_deg, 2);
 
     broadcastPrint(F(",\"front_ultrasonic_cm\":"));
     broadcastPrintInt(cached_front_ultrasonic_cm);
@@ -284,6 +284,13 @@ void printPoseJSON()
 
 void maybeSendTelemetry()
 {
+    // Don't transmit if there's incoming data waiting
+    if (espSerial.available() > 0)
+    {
+        lastTelemetrySendMs = millis(); // reset timer, try again next cycle
+        return;
+    }
+
     unsigned long now = millis();
     if (now - lastTelemetrySendMs >= TELEMETRY_PERIOD_MS)
     {
@@ -563,11 +570,11 @@ void sendWaypointReached()
     broadcastPrint(F(",\"t_ms\":"));
     broadcastPrintULong(millis());
     broadcastPrint(F(",\"x_cm\":"));
-    broadcastPrintFloat(x_cm, 3);
+    broadcastPrintFloat(x_cm, 2);
     broadcastPrint(F(",\"y_cm\":"));
-    broadcastPrintFloat(y_cm, 3);
+    broadcastPrintFloat(y_cm, 2);
     broadcastPrint(F(",\"theta_deg\":"));
-    broadcastPrintFloat(radToDeg(theta_rad), 3);
+    broadcastPrintFloat(radToDeg(theta_rad), 2);
     broadcastPrintLn(F("}"));
 }
 
@@ -582,11 +589,11 @@ void sendPathComplete()
     broadcastPrint(F(",\"t_ms\":"));
     broadcastPrintULong(millis());
     broadcastPrint(F(",\"x_cm\":"));
-    broadcastPrintFloat(x_cm, 3);
+    broadcastPrintFloat(x_cm, 2);
     broadcastPrint(F(",\"y_cm\":"));
-    broadcastPrintFloat(y_cm, 3);
+    broadcastPrintFloat(y_cm, 2);
     broadcastPrint(F(",\"theta_deg\":"));
-    broadcastPrintFloat(radToDeg(theta_rad), 3);
+    broadcastPrintFloat(radToDeg(theta_rad), 2);
     broadcastPrintLn(F("}"));
 }
 
@@ -751,6 +758,9 @@ void handleControlOpcode(char opcode)
     {
         performStop();
     }
+    else if (opcode == 'G'){
+        performToggleGripper();
+    }
 }
 
 void handleIncomingJson(const char *json)
@@ -792,7 +802,8 @@ void readFromStream(Stream &stream)
                 if (serialLineLength == 1 &&
                     (serialLineBuffer[0] == 'P' ||
                      serialLineBuffer[0] == 'R' ||
-                     serialLineBuffer[0] == 'S'))
+                     serialLineBuffer[0] == 'S' ||
+                     serialLineBuffer[0] == 'G'))
                 {
                     handleControlOpcode(serialLineBuffer[0]);
                 }
@@ -923,7 +934,7 @@ void setup()
 
     prizm.PrizmBegin();
     Serial.begin(115200);  // USB SERIAL
-    espSerial.begin(9600); // ESP COMMUNICATION SERIAL
+    espSerial.begin(38400); // ESP COMMUNICATION SERIAL (ESP NEEDS TO LOOK AT THE SAME BAUDRATE)
     prizm.setServoSpeed(GRIPPER_SERVO_ID, GRIPPER_SERVO_SPEED_PERCENT);
     prizm.setServoPosition(GRIPPER_SERVO_ID, GRIPPER_OPEN_DEG);
 
