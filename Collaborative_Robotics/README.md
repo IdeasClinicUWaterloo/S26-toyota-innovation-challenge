@@ -15,7 +15,7 @@ You are tasked with designing the control of a desktop robotic arm that resemble
 
 The following directions can be a starting direction for your development. You are not just limited to these directives; feel free to create something that has not been mentioned in the following.
 
-Milestones:
+**Milestones:**
 1. Make velcros visible to to robot
 Suggested Development: Modify pickCVBlock.py parameters such that the camera can see the red velcros on the table
 hints: 
