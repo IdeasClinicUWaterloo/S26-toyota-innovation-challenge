@@ -15,7 +15,7 @@ Students are invited to build autonomy, coordination, and fleet-management featu
 - Smarter pickup, drop-off, or gripper control workflows
 - Reliability improvements for command handling and robot recovery
 
-## Suggested Milestones
+## Recommended Roadmap
 
 Teams are encouraged to take the project in any direction. These milestones are not requirements or a scoring checklist; they are meant to give less experienced teams a practical path from "the robot moves" to "we built a fleet behavior." Advanced teams can skip, combine, or replace them with their own plan.
 
