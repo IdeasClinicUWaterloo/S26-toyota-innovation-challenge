@@ -10,7 +10,7 @@ Created By: Engineering IDEAs Clinic Co-op Students
 
 # Your Mission
 
-_Theme: Machine Learning and Robotics_ <br>
+_Theme: Machine Learning and Robotics in Manufacturing_ <br>
 As the manufacturing landscape enters a new era of volatility, Toyota Motor Manufacturing Canada (TMMC) is seeking to transcend traditional automation. You have been invited to the plant to improve Toyota’s manufacturing processes and to explore modern solutions to a robust manufacturing line. While Toyota is a global pioneer of Kaizen, the integration of Machine Learning and Robotics in 2026 presents a new frontier: moving from rigid, programmed sequences to adaptive, intelligent systems. Your role will be to take ML and robotics from the research lab to integrate to Toyota’s manufacturing missions.
 
 # Subproblems
@@ -75,3 +75,33 @@ Learn More: [Collaborative Robotics Subproblem](/Collaborative_Robotics)
 Resources and Kit information can be found in the folders for the respective subproblem. 
 
 To sign out a kit, go to the sign out table and speak to a coop. You will have to go through safety training for some of the kits.
+
+# Rubric
+You will be evaluated based on the following equally-weighted criteria. Please use these to guide your development decisions:
+
+| Category           | Criteria                                                                 |
+|-------------------|--------------------------------------------------------------------------|
+| **Ideation**       | Relevance, feasibility, innovation, impact                              |
+| **Execution**      | Functionality, quality of prototype, ease of use                        |
+| **Safety**         | Little to no risk to user; meets Canadian safety regulations            |
+| **Human Centricity** | How does this help humans?                                            |
+| **Presentation**   | Clearly explained; depth of knowledge; application of relevant concepts |
+
+
+## Schedule
+
+| Day      | Time        | Activity                                      |
+|----------|------------|-----------------------------------------------|
+| Friday   | 5:00–6:30 PM | Orientation and Presentations                |
+|    | 6:30–7:00 PM | Choose Teams and Problem Space              |    
+| Saturday | 9:00 AM     | Meet Stakeholders & Brainstorm Solutions   |  
+|  |  | Building Begins!       |
+|  | 12:00 PM    | Lunch                                       
+|  |  | Build Time continues   |
+|  | 5:00 PM     | Day’s End                                   |
+| Sunday   | 9:00 AM     | Start of Day                                
+|  |  | Build Time continues   |
+|    | 12:00 PM    | Lunch                                       
+|  |  | Build Time continues   |
+|    | 2:30 PM     | Project Judging                             |
+|    | 4:00 PM     | Results and Closing Remarks                 |
