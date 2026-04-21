@@ -15,7 +15,7 @@ Dobot Magician arm is capable in moving in the following highlighted areas. Befo
 
 3. Lanch the two apps after installation: Dobot Link shoud appear as an icon in tray, and dobot lab should be directly launchable 
 
-<img src="./tray.png" alt="location of tray icon" width="50%">
+<img src="./tray.png" alt="location of tray icon" width="40%">
 
 4. To launch dobotlink: pull up the application's icon in the tray, click and select "launch developer interface," then select "device test." In the connect row, select your robot arm and connect 
 <img src="./image (6).png" alt="location of tray icon" width="50%">
@@ -29,8 +29,10 @@ Dobot Magician arm is capable in moving in the following highlighted areas. Befo
 
 ## Robot Connect & Power Up:
 1. press the button with a "lock" icon on the robot arm and move it to the approximate poste as shown here
- ![image pose](<./Screenshot 2026-04-20 at 10.30.17 AM.png>)
+ <img src="./Screenshot 2026-04-20 at 10.30.17 AM.png" alt="image here" width="30%">
+ 
 2. connect the robot to your compuer by plugging in its USB cable
+
 3. press the power button on the robot's base. The robot should power up, beep after waiting for a moment. Robot should being its initialization process bu conducting a sweep over its entire operation region.
 4. Now you should be prepared to run your script! Check back in the main folder for how to run the given source code
 
