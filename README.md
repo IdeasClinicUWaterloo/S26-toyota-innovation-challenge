@@ -21,7 +21,7 @@ Modern manufacturing depends on hundreds of highly reliable machines working tog
 <br> <br>
 This challenge invites students to design and develop intelligent systems aimed at minimizing such disruptions. Participants are encouraged to explore a wide range of solutions, including Machine Learning models, sensor-based monitoring systems, or integrated robotic and sensor arrays that can continuously track machine performance.  
 <br>
-<img src="/assets/fault.png" width="50%">
+<img src="/assets/fault.png" width="20%">
 
 **Potential Solutions:**
 
