@@ -17,7 +17,7 @@ machine_state = "scanning plate"
 api = dType.load()
 cap = cv2.VideoCapture(0)
 H_matrix = np.load("HomographyMatrix.npy")
-data = np.load("camera_params.npz")
+data = np.load("Collaborative_Robotics\camera_params.npz")
 camera_matrix = data["camera_matrix"]
 dist_coeffs   = data["dist_coeffs"]
 

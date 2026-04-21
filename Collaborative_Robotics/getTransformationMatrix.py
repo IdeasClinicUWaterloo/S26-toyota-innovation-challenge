@@ -18,7 +18,7 @@ if not cam.isOpened():
     print("Camera failed to open")
     exit()
 
-data = np.load("camera_params.npz")
+data = np.load("Collaborative_Robotics\camera_params.npz")
 camera_matrix = data["camera_matrix"]
 dist_coeffs   = data["dist_coeffs"]
 

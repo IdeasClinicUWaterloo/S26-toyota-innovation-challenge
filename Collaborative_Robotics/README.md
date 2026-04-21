@@ -31,7 +31,7 @@ Each team will be provided with the following equipment:
 2. A Orbbec camera
 3. Camera Stand to mount camera
 The image below shows an example setup of the camera and the robot arm. This setup allows the camera to see the robot arm's location as well as the table. You can modify this setup according to your design needs.
-Setup: ![image setup](<S26-toyota-innovation-challenge/Collaborative_Robotics/IMG_6707.jpeg>)
+Setup: ![image setup](<./IMG_6707.jpeg>)
 Clipping Camera Stand: ![image setup](<S26-toyota-innovation-challenge/Collaborative_Robotics/IMG_6706.jpeg>)
 
 Each team will also be provided with 3 red tags to run the starter code. Teams can also request for 3 printed car parts as a part of their development.
