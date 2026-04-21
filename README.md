@@ -10,7 +10,7 @@ Created By: Engineering IDEAs Clinic Co-op Students
 
 # Your Mission
 
-_Theme: Machine Learning and Robotics_ <br>
+_Theme: Machine Learning and Robotics in Manufacturing_ <br>
 As the manufacturing landscape enters a new era of volatility, Toyota Motor Manufacturing Canada (TMMC) is seeking to transcend traditional automation. You have been invited to the plant to improve Toyota’s manufacturing processes and to explore modern solutions to a robust manufacturing line. While Toyota is a global pioneer of Kaizen, the integration of Machine Learning and Robotics in 2026 presents a new frontier: moving from rigid, programmed sequences to adaptive, intelligent systems. Your role will be to take ML and robotics from the research lab to integrate to Toyota’s manufacturing missions.
 
 # Subproblems
