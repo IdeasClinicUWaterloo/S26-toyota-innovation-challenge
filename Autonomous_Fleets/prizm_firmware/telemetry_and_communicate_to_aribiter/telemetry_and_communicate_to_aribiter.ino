@@ -9,16 +9,16 @@ PRIZM prizm;
 // ==============================
 // Robot identity / status
 // ==============================
-const char* ROBOT_ID = "robot_A";
-const char* robot_state = "idle";
+const char *ROBOT_ID = "robot_A";
+const char *robot_state = "idle";
 int current_path_id = -1;
 int current_waypoint_index = -1;
 
 // ==============================
 // Robot geometry
 // ==============================
-const float WHEEL_DIAMETER_CM = 10.16;     // 4 inches
-const float WHEEL_BASE_CM = 26.035;        // 10.25 inches
+const float WHEEL_DIAMETER_CM = 10.16; // 4 inches
+const float WHEEL_BASE_CM = 26.035;    // 10.25 inches
 const float WHEEL_CIRCUMFERENCE_CM = PI * WHEEL_DIAMETER_CM;
 const int GRIPPER_SERVO_ID = 1;
 const int GRIPPER_OPEN_DEG = 100;
@@ -46,7 +46,8 @@ int waypoint_count = 0;
 // ==============================
 // Motion / execution state
 // ==============================
-enum PrimitiveType {
+enum PrimitiveType
+{
   PRIM_NONE,
   PRIM_TURN,
   PRIM_DRIVE
@@ -84,53 +85,65 @@ int cached_front_ultrasonic_cm = -1;
 // ==============================
 // Helpers
 // ==============================
-float normalizeAngle(float angle) {
-  while (angle > PI) angle -= 2.0 * PI;
-  while (angle < -PI) angle += 2.0 * PI;
+float normalizeAngle(float angle)
+{
+  while (angle > PI)
+    angle -= 2.0 * PI;
+  while (angle < -PI)
+    angle += 2.0 * PI;
   return angle;
 }
 
-float radToDeg(float angle_rad) {
+float radToDeg(float angle_rad)
+{
   return angle_rad * 180.0 / PI;
 }
 
-float degToRad(float angle_deg) {
+float degToRad(float angle_deg)
+{
   return angle_deg * PI / 180.0;
 }
 
-int cmToMotorDegrees(float distance_cm) {
+int cmToMotorDegrees(float distance_cm)
+{
   return (int)round((distance_cm / WHEEL_CIRCUMFERENCE_CM) * 360.0);
 }
 
-int robotTurnDegToMotorDegrees(float robot_turn_deg) {
+int robotTurnDegToMotorDegrees(float robot_turn_deg)
+{
   float robot_turn_rad = robot_turn_deg * PI / 180.0;
   float wheel_travel_cm = (robot_turn_rad * WHEEL_BASE_CM) / 2.0;
   return cmToMotorDegrees(wheel_travel_cm);
 }
 
-void setRobotState(const char* new_state) {
+void setRobotState(const char *new_state)
+{
   robot_state = new_state;
 }
 
-void resetEncoderTracking() {
+void resetEncoderTracking()
+{
   prizm.resetEncoders();
   prevLeftDeg = 0;
   prevRightDeg = 0;
 }
 
-float distanceToWaypoint(float target_x, float target_y) {
+float distanceToWaypoint(float target_x, float target_y)
+{
   float dx = target_x - x_cm;
   float dy = target_y - y_cm;
   return sqrt(dx * dx + dy * dy);
 }
 
-float headingToWaypointRad(float target_x, float target_y) {
+float headingToWaypointRad(float target_x, float target_y)
+{
   float dx = target_x - x_cm;
   float dy = target_y - y_cm;
   return atan2(dy, dx);
 }
 
-float headingErrorDeg(float target_heading_rad) {
+float headingErrorDeg(float target_heading_rad)
+{
   float err = normalizeAngle(target_heading_rad - theta_rad);
   return radToDeg(err);
 }
@@ -138,7 +151,8 @@ float headingErrorDeg(float target_heading_rad) {
 // ==============================
 // Odometry
 // ==============================
-void updatePoseFromEncoders(long leftDeg, long rightDeg) {
+void updatePoseFromEncoders(long leftDeg, long rightDeg)
+{
   long deltaLeftDeg = leftDeg - prevLeftDeg;
   long deltaRightDeg = rightDeg - prevRightDeg;
 
@@ -162,27 +176,32 @@ void updatePoseFromEncoders(long leftDeg, long rightDeg) {
   theta_rad = normalizeAngle(theta_rad + dTheta);
 }
 
-void updateOdometry() {
-  long leftDeg  = prizm.readEncoderDegrees(2);  // motor 2 = left wheel
-  long rightDeg = prizm.readEncoderDegrees(1);  // motor 1 = right wheel
+void updateOdometry()
+{
+  long leftDeg = prizm.readEncoderDegrees(2);  // motor 2 = left wheel
+  long rightDeg = prizm.readEncoderDegrees(1); // motor 1 = right wheel
   updatePoseFromEncoders(leftDeg, rightDeg);
 }
 
 // ==============================
 // Telemetry
 // ==============================
-void maybeUpdateSensors() {
+void maybeUpdateSensors()
+{
   unsigned long now = millis();
 
-  if (now - lastSensorReadMs < SENSOR_READ_PERIOD_MS) return;
-  if (Serial.available() > 0) return;
+  if (now - lastSensorReadMs < SENSOR_READ_PERIOD_MS)
+    return;
+  if (Serial.available() > 0)
+    return;
 
   cached_left_ultrasonic_cm = prizm.readSonicSensorCM(2);
   cached_front_ultrasonic_cm = prizm.readSonicSensorCM(4);
   lastSensorReadMs = now;
 }
 
-void printPoseJSON() {
+void printPoseJSON()
+{
   unsigned long t_ms = millis();
   float theta_deg = radToDeg(theta_rad);
 
@@ -223,9 +242,11 @@ void printPoseJSON() {
   Serial.println(F("}"));
 }
 
-void maybeSendTelemetry() {
+void maybeSendTelemetry()
+{
   unsigned long now = millis();
-  if (now - lastTelemetrySendMs >= TELEMETRY_PERIOD_MS) {
+  if (now - lastTelemetrySendMs >= TELEMETRY_PERIOD_MS)
+  {
     printPoseJSON();
     lastTelemetrySendMs = now;
   }
@@ -234,7 +255,8 @@ void maybeSendTelemetry() {
 // ==============================
 // Low-level motion primitives
 // ==============================
-void stopMotorsNow() {
+void stopMotorsNow()
+{
   // Explicitly zero any in-flight motor-degree command before cutting power.
   prizm.setMotorDegrees(0, 0, 0, 0);
   prizm.setMotorPower(1, 0);
@@ -242,8 +264,10 @@ void stopMotorsNow() {
   active_primitive = PRIM_NONE;
 }
 
-void interruptActivePrimitive() {
-  if (active_primitive != PRIM_NONE) {
+void interruptActivePrimitive()
+{
+  if (active_primitive != PRIM_NONE)
+  {
     updateOdometry();
   }
 
@@ -251,7 +275,8 @@ void interruptActivePrimitive() {
   resetEncoderTracking();
 }
 
-void startDriveStraight(float distance_cm) {
+void startDriveStraight(float distance_cm)
+{
   int motor_deg = cmToMotorDegrees(distance_cm);
 
   resetEncoderTracking();
@@ -262,15 +287,19 @@ void startDriveStraight(float distance_cm) {
   setRobotState("executing_path");
 }
 
-void startTurnInPlace(float robot_turn_deg) {
+void startTurnInPlace(float robot_turn_deg)
+{
   int motor_deg = robotTurnDegToMotorDegrees(fabs(robot_turn_deg));
 
   resetEncoderTracking();
 
-  if (robot_turn_deg > 0) {
+  if (robot_turn_deg > 0)
+  {
     prizm.setMotorDegrees(turn_speed_deg_per_sec, motor_deg,
                           turn_speed_deg_per_sec, motor_deg);
-  } else {
+  }
+  else
+  {
     prizm.setMotorDegrees(turn_speed_deg_per_sec, -motor_deg,
                           turn_speed_deg_per_sec, -motor_deg);
   }
@@ -279,33 +308,40 @@ void startTurnInPlace(float robot_turn_deg) {
   setRobotState("executing_path");
 }
 
-bool motorsBusy() {
+bool motorsBusy()
+{
   return (prizm.readMotorBusy(1) == 1 || prizm.readMotorBusy(2) == 1);
 }
 
 // ==============================
 // Simple JSON field parsing
 // ==============================
-const char* findFieldValueStart(const char* json, const char* key) {
+const char *findFieldValueStart(const char *json, const char *key)
+{
   static char pattern[32];
   snprintf(pattern, sizeof(pattern), "\"%s\":", key);
 
-  const char* start = strstr(json, pattern);
-  if (start == NULL) return NULL;
+  const char *start = strstr(json, pattern);
+  if (start == NULL)
+    return NULL;
 
   return start + strlen(pattern);
 }
 
-bool extractStringField(const char* json, const char* key, char* outVal, size_t outSize) {
-  const char* valueStart = findFieldValueStart(json, key);
-  if (valueStart == NULL || *valueStart != '"' || outSize == 0) return false;
+bool extractStringField(const char *json, const char *key, char *outVal, size_t outSize)
+{
+  const char *valueStart = findFieldValueStart(json, key);
+  if (valueStart == NULL || *valueStart != '"' || outSize == 0)
+    return false;
 
   valueStart++;
-  const char* valueEnd = strchr(valueStart, '"');
-  if (valueEnd == NULL) return false;
+  const char *valueEnd = strchr(valueStart, '"');
+  if (valueEnd == NULL)
+    return false;
 
   size_t copyLen = valueEnd - valueStart;
-  if (copyLen >= outSize) {
+  if (copyLen >= outSize)
+  {
     copyLen = outSize - 1;
   }
 
@@ -314,52 +350,62 @@ bool extractStringField(const char* json, const char* key, char* outVal, size_t 
   return true;
 }
 
-bool jsonHasType(const char* json, const char* typeValue) {
+bool jsonHasType(const char *json, const char *typeValue)
+{
   char actualType[20];
-  return extractStringField(json, "type", actualType, sizeof(actualType))
-    && strcmp(actualType, typeValue) == 0;
+  return extractStringField(json, "type", actualType, sizeof(actualType)) && strcmp(actualType, typeValue) == 0;
 }
 
-bool jsonTargetsThisRobot(const char* json) {
+bool jsonTargetsThisRobot(const char *json)
+{
   char targetRobot[20];
-  return extractStringField(json, "robot_id", targetRobot, sizeof(targetRobot))
-    && strcmp(targetRobot, ROBOT_ID) == 0;
+  return extractStringField(json, "robot_id", targetRobot, sizeof(targetRobot)) && strcmp(targetRobot, ROBOT_ID) == 0;
 }
 
-bool extractIntField(const char* json, const char* key, int& outVal) {
-  const char* valueStart = findFieldValueStart(json, key);
-  if (valueStart == NULL) return false;
+bool extractIntField(const char *json, const char *key, int &outVal)
+{
+  const char *valueStart = findFieldValueStart(json, key);
+  if (valueStart == NULL)
+    return false;
 
-  char* valueEnd = NULL;
+  char *valueEnd = NULL;
   long parsed = strtol(valueStart, &valueEnd, 10);
-  if (valueEnd == valueStart) return false;
+  if (valueEnd == valueStart)
+    return false;
 
   outVal = (int)parsed;
   return true;
 }
 
-bool extractFloatField(const char* json, const char* key, float& outVal) {
-  const char* valueStart = findFieldValueStart(json, key);
-  if (valueStart == NULL) return false;
+bool extractFloatField(const char *json, const char *key, float &outVal)
+{
+  const char *valueStart = findFieldValueStart(json, key);
+  if (valueStart == NULL)
+    return false;
 
-  char* valueEnd = NULL;
+  char *valueEnd = NULL;
   float parsed = (float)strtod(valueStart, &valueEnd);
-  if (valueEnd == valueStart) return false;
+  if (valueEnd == valueStart)
+    return false;
 
   outVal = parsed;
   return true;
 }
 
-bool extractBoolField(const char* json, const char* key, bool& outVal) {
-  const char* valueStart = findFieldValueStart(json, key);
-  if (valueStart == NULL) return false;
+bool extractBoolField(const char *json, const char *key, bool &outVal)
+{
+  const char *valueStart = findFieldValueStart(json, key);
+  if (valueStart == NULL)
+    return false;
 
-  if (strncmp(valueStart, "true", 4) == 0) {
+  if (strncmp(valueStart, "true", 4) == 0)
+  {
     outVal = true;
     return true;
   }
 
-  if (strncmp(valueStart, "false", 5) == 0) {
+  if (strncmp(valueStart, "false", 5) == 0)
+  {
     outVal = false;
     return true;
   }
@@ -367,26 +413,32 @@ bool extractBoolField(const char* json, const char* key, bool& outVal) {
   return false;
 }
 
-int extractWaypoints(const char* json) {
+int extractWaypoints(const char *json)
+{
   int count = 0;
-  const char* searchPos = json;
+  const char *searchPos = json;
 
-  while (count < MAX_WAYPOINTS) {
-    const char* xKey = strstr(searchPos, "\"x_cm\":");
-    if (xKey == NULL) break;
+  while (count < MAX_WAYPOINTS)
+  {
+    const char *xKey = strstr(searchPos, "\"x_cm\":");
+    if (xKey == NULL)
+      break;
     xKey += 7;
 
-    char* xEnd = NULL;
+    char *xEnd = NULL;
     waypoint_xs[count] = (int16_t)lround(strtod(xKey, &xEnd));
-    if (xEnd == xKey) break;
+    if (xEnd == xKey)
+      break;
 
-    const char* yKey = strstr(xEnd, "\"y_cm\":");
-    if (yKey == NULL) break;
+    const char *yKey = strstr(xEnd, "\"y_cm\":");
+    if (yKey == NULL)
+      break;
     yKey += 7;
 
-    char* yEnd = NULL;
+    char *yEnd = NULL;
     waypoint_ys[count] = (int16_t)lround(strtod(yKey, &yEnd));
-    if (yEnd == yKey) break;
+    if (yEnd == yKey)
+      break;
 
     count++;
     searchPos = yEnd;
@@ -398,7 +450,8 @@ int extractWaypoints(const char* json) {
 // ==============================
 // Command handling
 // ==============================
-void clearCurrentPath() {
+void clearCurrentPath()
+{
   waypoint_count = 0;
   current_waypoint_index = -1;
   current_path_id = -1;
@@ -407,7 +460,8 @@ void clearCurrentPath() {
   active_primitive = PRIM_NONE;
 }
 
-void sendAck(const char* forType) {
+void sendAck(const char *forType)
+{
   Serial.print(F("{\"type\":\"ack\""));
   Serial.print(F(",\"robot_id\":\""));
   Serial.print(ROBOT_ID);
@@ -422,7 +476,8 @@ void sendAck(const char* forType) {
   Serial.println(F("}"));
 }
 
-void sendStatus(const char* state, const char* reason) {
+void sendStatus(const char *state, const char *reason)
+{
   Serial.print(F("{\"type\":\"status\""));
   Serial.print(F(",\"robot_id\":\""));
   Serial.print(ROBOT_ID);
@@ -442,7 +497,8 @@ void sendStatus(const char* state, const char* reason) {
   Serial.println(F("}"));
 }
 
-void sendPathStarted() {
+void sendPathStarted()
+{
   Serial.print(F("{\"type\":\"path_started\""));
   Serial.print(F(",\"robot_id\":\""));
   Serial.print(ROBOT_ID);
@@ -454,7 +510,8 @@ void sendPathStarted() {
   Serial.println(F("}"));
 }
 
-void sendWaypointReached() {
+void sendWaypointReached()
+{
   Serial.print(F("{\"type\":\"waypoint_reached\""));
   Serial.print(F(",\"robot_id\":\""));
   Serial.print(ROBOT_ID);
@@ -474,7 +531,8 @@ void sendWaypointReached() {
   Serial.println(F("}"));
 }
 
-void sendPathComplete() {
+void sendPathComplete()
+{
   Serial.print(F("{\"type\":\"path_complete\""));
   Serial.print(F(",\"robot_id\":\""));
   Serial.print(ROBOT_ID);
@@ -492,8 +550,10 @@ void sendPathComplete() {
   Serial.println(F("}"));
 }
 
-void handlePathAssignment(const char* json) {
-  if (!jsonTargetsThisRobot(json)) return;
+void handlePathAssignment(const char *json)
+{
+  if (!jsonTargetsThisRobot(json))
+    return;
 
   int newPathId = -1;
   extractIntField(json, "path_id", newPathId);
@@ -506,18 +566,21 @@ void handlePathAssignment(const char* json) {
   bool replaceExisting = true;
   extractBoolField(json, "replace_existing", replaceExisting);
 
-  if (!replaceExisting && (path_loaded || active_primitive != PRIM_NONE)) {
+  if (!replaceExisting && (path_loaded || active_primitive != PRIM_NONE))
+  {
     sendStatus("blocked", "path_rejected_busy");
     return;
   }
 
   int newWaypointCount = extractWaypoints(json);
-  if (newWaypointCount <= 0) {
+  if (newWaypointCount <= 0)
+  {
     sendStatus("error", "bad_path_assignment");
     return;
   }
 
-  if (replaceExisting && (path_loaded || active_primitive != PRIM_NONE)) {
+  if (replaceExisting && (path_loaded || active_primitive != PRIM_NONE))
+  {
     interruptActivePrimitive();
   }
 
@@ -538,8 +601,10 @@ void handlePathAssignment(const char* json) {
   printPoseJSON();
 }
 
-void performPause() {
-  if (path_loaded || active_primitive != PRIM_NONE) {
+void performPause()
+{
+  if (path_loaded || active_primitive != PRIM_NONE)
+  {
     interruptActivePrimitive();
   }
 
@@ -550,26 +615,33 @@ void performPause() {
   printPoseJSON();
 }
 
-void handlePause(const char* json) {
-  if (!jsonTargetsThisRobot(json)) return;
+void handlePause(const char *json)
+{
+  if (!jsonTargetsThisRobot(json))
+    return;
   performPause();
 }
 
-void performResume() {
+void performResume()
+{
   path_paused = false;
-  if (path_loaded) {
+  if (path_loaded)
+  {
     setRobotState("idle");
   }
   sendAck("resume");
   sendStatus(robot_state, "resume_requested");
 }
 
-void handleResume(const char* json) {
-  if (!jsonTargetsThisRobot(json)) return;
+void handleResume(const char *json)
+{
+  if (!jsonTargetsThisRobot(json))
+    return;
   performResume();
 }
 
-void performStop() {
+void performStop()
+{
   interruptActivePrimitive();
   clearCurrentPath();
   path_paused = false;
@@ -580,11 +652,15 @@ void performStop() {
   printPoseJSON();
 }
 
-void performToggleGripper() {
+void performToggleGripper()
+{
   gripper_closed = !gripper_closed;
-  if (gripper_closed) {
+  if (gripper_closed)
+  {
     prizm.setServoPosition(GRIPPER_SERVO_ID, GRIPPER_CLOSED_DEG);
-  } else {
+  }
+  else
+  {
     prizm.setServoPosition(GRIPPER_SERVO_ID, GRIPPER_OPEN_DEG);
   }
 
@@ -592,65 +668,98 @@ void performToggleGripper() {
   sendStatus(robot_state, gripper_closed ? "gripper_closed" : "gripper_opened");
 }
 
-void handleStop(const char* json) {
-  if (!jsonTargetsThisRobot(json)) return;
+void handleStop(const char *json)
+{
+  if (!jsonTargetsThisRobot(json))
+    return;
   performStop();
 }
 
-void handleToggleGripper(const char* json) {
-  if (!jsonTargetsThisRobot(json)) return;
+void handleToggleGripper(const char *json)
+{
+  if (!jsonTargetsThisRobot(json))
+    return;
   performToggleGripper();
 }
 
-void handleControlOpcode(char opcode) {
-  if (opcode == 'P') {
+void handleControlOpcode(char opcode)
+{
+  if (opcode == 'P')
+  {
     performPause();
-  } else if (opcode == 'R') {
+  }
+  else if (opcode == 'R')
+  {
     performResume();
-  } else if (opcode == 'S') {
+  }
+  else if (opcode == 'S')
+  {
     performStop();
   }
 }
 
-void handleIncomingJson(const char* json) {
-  if (jsonHasType(json, "path_assignment")) {
+void handleIncomingJson(const char *json)
+{
+  if (jsonHasType(json, "path_assignment"))
+  {
     handlePathAssignment(json);
-  } else if (jsonHasType(json, "pause")) {
+  }
+  else if (jsonHasType(json, "pause"))
+  {
     handlePause(json);
-  } else if (jsonHasType(json, "resume")) {
+  }
+  else if (jsonHasType(json, "resume"))
+  {
     handleResume(json);
-  } else if (jsonHasType(json, "stop")) {
+  }
+  else if (jsonHasType(json, "stop"))
+  {
     handleStop(json);
-  } else if (jsonHasType(json, "toggle_gripper")) {
+  }
+  else if (jsonHasType(json, "toggle_gripper"))
+  {
     handleToggleGripper(json);
   }
 }
 
-void readSerialCommands() {
-  while (Serial.available() > 0) {
+void readSerialCommands()
+{
+  while (Serial.available() > 0)
+  {
     char c = (char)Serial.read();
 
-    if (c == '\r') {
+    if (c == '\r')
+    {
       continue;
     }
 
-    if (c == '\n') {
-      if (serialLineLength > 0) {
+    if (c == '\n')
+    {
+      if (serialLineLength > 0)
+      {
         serialLineBuffer[serialLineLength] = '\0';
         if (serialLineLength == 1 &&
             (serialLineBuffer[0] == 'P' ||
              serialLineBuffer[0] == 'R' ||
-             serialLineBuffer[0] == 'S')) {
+             serialLineBuffer[0] == 'S'))
+        {
           handleControlOpcode(serialLineBuffer[0]);
-        } else {
+        }
+        else
+        {
           handleIncomingJson(serialLineBuffer);
         }
         serialLineLength = 0;
       }
-    } else {
-      if (serialLineLength < SERIAL_LINE_BUFFER_SIZE - 1) {
+    }
+    else
+    {
+      if (serialLineLength < SERIAL_LINE_BUFFER_SIZE - 1)
+      {
         serialLineBuffer[serialLineLength++] = c;
-      } else {
+      }
+      else
+      {
         // Drop oversized malformed lines and wait for the next newline.
         serialLineLength = 0;
       }
@@ -661,22 +770,29 @@ void readSerialCommands() {
 // ==============================
 // Path execution state machine
 // ==============================
-void updateActivePrimitive() {
-  if (active_primitive == PRIM_NONE) return;
+void updateActivePrimitive()
+{
+  if (active_primitive == PRIM_NONE)
+    return;
 
   updateOdometry();
 
-  if (!motorsBusy()) {
-    if (active_primitive == PRIM_DRIVE) {
+  if (!motorsBusy())
+  {
+    if (active_primitive == PRIM_DRIVE)
+    {
       sendWaypointReached();
       current_waypoint_index++;
     }
 
     active_primitive = PRIM_NONE;
 
-    if (path_paused) {
+    if (path_paused)
+    {
       setRobotState("paused");
-    } else {
+    }
+    else
+    {
       setRobotState("idle");
     }
 
@@ -684,17 +800,23 @@ void updateActivePrimitive() {
   }
 }
 
-void maybeStartNextPrimitive() {
-  if (!path_loaded) return;
-  if (path_paused) return;
-  if (active_primitive != PRIM_NONE) return;
+void maybeStartNextPrimitive()
+{
+  if (!path_loaded)
+    return;
+  if (path_paused)
+    return;
+  if (active_primitive != PRIM_NONE)
+    return;
 
-  if (!path_started_sent) {
+  if (!path_started_sent)
+  {
     sendPathStarted();
     path_started_sent = true;
   }
 
-  if (current_waypoint_index < 0 || current_waypoint_index >= waypoint_count) {
+  if (current_waypoint_index < 0 || current_waypoint_index >= waypoint_count)
+  {
     sendPathComplete();
     clearCurrentPath();
     setRobotState("idle");
@@ -707,11 +829,13 @@ void maybeStartNextPrimitive() {
 
   float dist = distanceToWaypoint(target_x, target_y);
 
-  if (dist <= POSITION_TOLERANCE_CM) {
+  if (dist <= POSITION_TOLERANCE_CM)
+  {
     sendWaypointReached();
     current_waypoint_index++;
 
-    if (current_waypoint_index >= waypoint_count) {
+    if (current_waypoint_index >= waypoint_count)
+    {
       sendPathComplete();
       clearCurrentPath();
       setRobotState("idle");
@@ -723,9 +847,12 @@ void maybeStartNextPrimitive() {
   float target_heading = headingToWaypointRad(target_x, target_y);
   float heading_err_deg = headingErrorDeg(target_heading);
 
-  if (fabs(heading_err_deg) > HEADING_TOLERANCE_DEG) {
+  if (fabs(heading_err_deg) > HEADING_TOLERANCE_DEG)
+  {
     startTurnInPlace(heading_err_deg);
-  } else {
+  }
+  else
+  {
     startDriveStraight(dist);
   }
 }
@@ -733,7 +860,8 @@ void maybeStartNextPrimitive() {
 // ==============================
 // Setup / loop
 // ==============================
-void setup() {
+void setup()
+{
   prizm.PrizmBegin();
   Serial.begin(115200);
   prizm.setServoSpeed(GRIPPER_SERVO_ID, GRIPPER_SERVO_SPEED_PERCENT);
@@ -744,7 +872,8 @@ void setup() {
   printPoseJSON();
 }
 
-void loop() {
+void loop()
+{
   // 1. Read commands from laptop
   readSerialCommands();
   readSerialCommands();

@@ -1,9 +1,10 @@
 # Robot Firmware Tutorial
 
-This folder contains two Arduino sketches for PRIZM-based robot testing.
+This folder contains three Arduino sketches for PRIZM-based robot testing.
 
 - `testing-bot-controls.ino` is a minimal manual-control sketch.
-- `telemetry_and_communicate_to_aribiter/telemetry_and_communicate_to_aribiter.ino` is the full telemetry and waypoint sketch used with the Python arbiter.
+- `telemetry_and_communicate_to_aribiter.ino` is the full telemetry and waypoint sketch used with the Python arbiter.
+- `wireless-bot-controls.ino` is the the full telemetry and waypoint sketch that can be used wirelessly with the Python arbiter when using a Robot with an ESP32 attached.
 
 ## Simple Manual-Control Sketch
 
@@ -160,4 +161,3 @@ Telemetry is sent every `250 ms` by default. Ultrasonic readings are refreshed e
 - Add new command handlers near `handleIncomingJson`.
 
 After changing motion behavior, test with the simple sketch first, then run a one-waypoint path from the GUI before trying coordinated traversal.
-

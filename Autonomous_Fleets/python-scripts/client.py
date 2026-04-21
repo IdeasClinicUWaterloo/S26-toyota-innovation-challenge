@@ -21,6 +21,44 @@ SERIAL_BAUD = int(os.getenv("SERIAL_BAUD", "115200"))
 ROBOT_ID = os.getenv("ROBOT_ID", "robot_A")
 CLIENT_NAME = os.getenv("CLIENT_NAME", f"{ROBOT_ID}_laptop")
 
+# Wifi Connection envs
+USE_WIFI_BRIDGE = os.getenv("USE_WIFI_BRIDGE", "false").lower() == "true"
+
+ESP32_HOST = os.getenv("ESP32_HOST")
+ESP32_PORT = int(os.getenv("ESP32_PORT", "81"))
+
+# Robot Communication Class
+class RobotTransport:
+    def __init__(self):
+        self.mode = "wifi" if USE_WIFI_BRIDGE else "serial"
+
+        if self.mode == "serial":
+            self.ser = serial.Serial(SERIAL_PORT, SERIAL_BAUD, timeout=1)
+            print(f"[COMMUNICATION] Using SERIAL {SERIAL_PORT}")
+
+        else:
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.sock.connect((ESP32_HOST, ESP32_PORT))
+            print(f"[COMMUNICATION] Using WIFI {ESP32_HOST}:{ESP32_PORT}")
+
+    def write(self, message: str):
+        if self.mode == "serial":
+            self.ser.write(message.encode("utf-8"))
+            self.ser.flush()
+        else:
+            # send raw string to ESP32 websocket-like TCP
+            self.sock.sendall(message.encode("utf-8"))
+
+    def readline(self):
+        if self.mode == "serial":
+            return self.ser.readline().decode("utf-8", errors="replace")
+        else:
+            try:
+                data = self.sock.recv(1024)
+                return data.decode("utf-8", errors="replace")
+            except:
+                return ""
+
 # Command types that should be forwarded from server -> robot serial
 FORWARD_TO_ROBOT_TYPES = {
     "path_assignment",
@@ -101,30 +139,35 @@ def encode_payload_for_serial(payload: dict) -> str:
         return "R\n"
     if msg_type == "stop":
         return "S\n"
-
+    if msg_type == "toggle_gripper":
+        return "G\n"
     compact_payload = compact_payload_for_serial(payload)
     return json.dumps(compact_payload, separators=(",", ":")) + "\n"
 
 
-def send_json_line_over_serial(ser: serial.Serial, payload: dict) -> None:
+def send_json_line_over_transport(transport: RobotTransport, payload: dict) -> None:
     message = encode_payload_for_serial(payload)
-    retry_count = SERIAL_RETRY_COUNTS.get(payload.get("type"), 1)
+    retry_count = SERIAL_RETRY_COUNTS.get(payload.get("type"), 3)
+
     with serial_write_lock:
+        # For large JSON Commands, stop Robot Telemetry Data from Coming in
+        if payload.get("type") == "path_assignment":
+            transport.write("S\n")                      # Stop the Robot
+            time.sleep(0.8)                             # Delay for Buffer
+
         for attempt in range(retry_count):
-            ser.write(message.encode("utf-8"))
-            ser.flush()
+            transport.write(message)
             if attempt + 1 < retry_count:
                 time.sleep(SERIAL_RETRY_DELAY_S)
 
-
-def forward_serial_to_server(ser: serial.Serial, sock: socket.socket) -> None:
+def forward_serial_to_server(transport: RobotTransport, sock: socket.socket) -> None:
     """
     Continuously read newline-delimited JSON from serial and forward it to the server.
     """
     while True:
         try:
-            line = ser.readline().decode("utf-8", errors="replace").strip()
-
+            line = transport.readline().strip()
+            
             if not line:
                 continue
 
@@ -149,7 +192,7 @@ def forward_serial_to_server(ser: serial.Serial, sock: socket.socket) -> None:
             break
 
 
-def receive_from_server(sock: socket.socket, ser: serial.Serial) -> None:
+def receive_from_server(sock: socket.socket, transport: RobotTransport) -> None:
     """
     Continuously read newline-delimited JSON from server.
     Forward command messages to robot over serial.
@@ -190,7 +233,7 @@ def receive_from_server(sock: socket.socket, ser: serial.Serial) -> None:
 
                 # Forward actual robot commands to serial
                 if msg_type in FORWARD_TO_ROBOT_TYPES:
-                    send_json_line_over_serial(ser, msg)
+                    send_json_line_over_transport(transport, msg)                    
                     print(f"[TCP->SERIAL forwarded] {msg_type} to robot")
 
                 else:
@@ -221,6 +264,9 @@ def heartbeat_loop(sock: socket.socket) -> None:
 
 
 def main() -> None:
+    # Open Communication to Robot (either wired Serial or WiFi)
+    transport = RobotTransport()
+    
     if not SERVER_HOST:
         print("Missing SERVER_HOST_IP_ADDRESS in .env")
         return
@@ -230,10 +276,6 @@ def main() -> None:
         return
 
     try:
-        # Open serial port to robot
-        ser = serial.Serial(SERIAL_PORT, SERIAL_BAUD, timeout=1)
-        print(f"Opened serial port {SERIAL_PORT} @ {SERIAL_BAUD}")
-
         # Connect to central arbiter
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((SERVER_HOST, SERVER_PORT))
@@ -252,7 +294,7 @@ def main() -> None:
         # Start background receiver for commands from server
         threading.Thread(
             target=receive_from_server,
-            args=(sock, ser),
+            args=(sock, transport),
             daemon=True,
         ).start()
 
@@ -264,7 +306,7 @@ def main() -> None:
         ).start()
 
         # Main loop: forward robot telemetry to server
-        forward_serial_to_server(ser, sock)
+        forward_serial_to_server(transport, sock)
 
     except serial.SerialException as e:
         print(f"Serial error: {e}")

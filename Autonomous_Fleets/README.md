@@ -104,18 +104,20 @@ This folder contains starter material for the student hackathon. It is intended 
 
 ### Included Components
 
-- `starter-code/python-scripts/central-arbiter.py`
+- `python-scripts/central-arbiter.py`
   Central laptop/server process that accepts robot connections, displays telemetry in a GUI, sends commands, and supports a two-robot coordinated traverse mode.
-- `starter-code/python-scripts/client.py`
+- `python-scripts/client.py`
   Laptop-side bridge that connects one robot to the central arbiter over TCP and forwards commands to the robot over serial.
-- `starter-code/python-scripts/gui.py`
+- `python-scripts/gui.py`
   Telemetry dashboard with robot status, arena visualization, manual controls, test-path buttons, and grid-based coordination controls.
-- `starter-code/python-scripts/messages.py`
+- `python-scripts/messages.py`
   Shared message definitions for telemetry, path assignment, acknowledgements, pause/resume/stop, gripper toggle, and heartbeat messages.
-- `starter-code/testing-bot-controls/testing-bot-controls.ino`
+- `prizm_firmware/testing-bot-controls/testing-bot-controls.ino`
   Simple Arduino/PRIZM sketch for basic manual movement and gripper testing over serial commands.
-- `starter-code/testing-bot-controls/telemetry_and_communicate_to_aribiter/telemetry_and_communicate_to_aribiter.ino`
+- `prizm_firmware/telemetry_and_communicate_to_aribiter/telemetry_and_communicate_to_aribiter.ino`
   More complete robot sketch with odometry, waypoint execution, telemetry publishing, ultrasonic sensor readings, acknowledgements, and command handling.
+- `prizm_firmware/wireless-bot-controls/wireless-bot-controls.ino`
+  A Port of `telemetry_and_communicate_to_arbiter.ino` that allows you to communicate to the robot wirelessly via an ESP32
 
 ## Development Setup
 
@@ -142,13 +144,13 @@ For board and port configuration:
 
 ### Python Environment
 
-The Python starter code expects a local environment with the packages listed in `starter-code/python-scripts/requirements.txt`.
+The Python starter code expects a local environment with the packages listed in `python-scripts/requirements.txt`.
 
 Example workflow:
 
 1. Create a virtual environment
 2. Install the requirements
-3. Copy `starter-code/.env.example` to `.env`
+3. Copy `.env.example` to `.env`
 4. Update the values for your local machine and robot
 
 ### Environment Variables
@@ -172,6 +174,7 @@ Choose the Arduino sketch that matches your use case:
 
 - Use `testing-bot-controls.ino` for simple manual drive and gripper testing
 - Use `telemetry_and_communicate_to_aribiter.ino` for telemetry, waypoint following, and arbiter communication
+- Use `wireless-bot-controls.ino` for telemetry, waypoint following and arbiter communication wirelessly
 
 Before uploading:
 
@@ -182,7 +185,7 @@ Before uploading:
 
 ### 2. Start the Central Arbiter
 
-Run `starter-code/python-scripts/central-arbiter.py` on the machine acting as the server/operator station.
+Run `python-scripts/central-arbiter.py` on the machine acting as the server/operator station.
 
 The arbiter:
 
@@ -193,7 +196,7 @@ The arbiter:
 
 ### 3. Start a Robot Client
 
-Run `starter-code/python-scripts/client.py` on the laptop connected to a robot controller.
+Run `python-scripts/client.py` on the laptop connected to a robot controller.
 
 The client:
 
