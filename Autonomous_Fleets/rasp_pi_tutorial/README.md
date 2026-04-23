@@ -4,6 +4,8 @@ You have the option to run the client code on your local computer or on the Rasp
 ## Usage Description: 
 The raspberry pi essentially replaces your laptop to plug into the PRIZM controller. It will run the same client.py code that you would run on your laptop. It also enables for local processing on the pi, such as computer vision processing through a camera module. For a documentation of useful computer vision for the robot, click [here].
 
+**TL, DR for running**: launch central-arbiter.py in your computer, client.py on the raspberry pi, and prizm firmware on the prizm controller. The raspberry pi will communicate with the prizm controller through a USB cable, and communicate with your computer through wifi.
+
 ## Note:
 - Please **speak to a co-op student or a TA** if you are interested in controlling one or more of your robots with Raspberry Pi. They need to provide you with the raspberry pi, credentials to use the pi, and hardware to mount the pi on the robot. Note **inventory is limited**, so please reach out early if you are interested in using the raspberry pi.
 
