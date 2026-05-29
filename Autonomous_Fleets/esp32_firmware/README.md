@@ -20,10 +20,12 @@ This firmware turns the ESP32 into a WiFi-to-UART bridge for the PRIZM controlle
   - No level shifter required
   - Recommended: 10kΩ pull-down resistor
 - ESP32 RX (GPIO 4) ← PRIZM TX (D9)
-  - Use voltage divider (2kΩ + 3.9kΩ)
+  - Use voltage divider (the example uses 2kΩ + 3.9kΩ; pulls the voltage down to less than 3.3 V)
 - PRIZM RX/TX are on Digital Sensor Port (D2/D9)
 
 for alternative pin mappings, see page 129 of the [PRIZM Programming Guide](https://asset.pitsco.com/sharedimages/resources/tetrix-prizm-programming-guide.pdf)
+
+Note: for ESP32 C6 (has 2 USB-C ports on it), the 10 k ohm pull down is not present
 
 <table align="center">
   <tr>
