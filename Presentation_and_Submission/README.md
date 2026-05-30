@@ -12,4 +12,4 @@ You will be evaluated based on the following equally-weighted criteria. Please u
 
 # Presentation Format
 You will have 7 minutes to present your solution to the judges followed by 3 minutes of Q&A.
-You may use this presentation template as a guide.
+You may use [this presentation template](Presentation_and_Submission/Toyota Innovation ChallengeMechanical_StudentPresentationTemplate.pptx) as a guide. 
