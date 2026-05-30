@@ -6,7 +6,7 @@ Created By: Engineering IDEAs Clinic Co-op Students
 
 ## Quick Links
 
-[Fault Prediction](/Fault_Prediction), [Autonomous Fleet Coordination](/Autonomous_Fleets), [Collaborative Robotics](/Collaborative_Robotics)
+[Fault Prediction](/Fault_Prediction), [Autonomous Fleet Coordination](/Autonomous_Fleets), [Collaborative Robotics](/Collaborative_Robotics), [Rubric & Presentation](/Rubric_&_Presentation)
 
 # Your Mission
 
@@ -76,7 +76,7 @@ Resources and Kit information can be found in the folders for the respective sub
 
 To sign out a kit, go to the sign out table and speak to a coop. You will have to go through safety training for some of the kits.
 
-# Rubric
+# Rubric & Presentation
 You will be evaluated based on the following equally-weighted criteria. Please use these to guide your development decisions:
 
 | Category           | Criteria                                                                 |
@@ -87,6 +87,7 @@ You will be evaluated based on the following equally-weighted criteria. Please u
 | **Human Centricity** | How does this help humans?                                            |
 | **Presentation**   | Clearly explained; depth of knowledge; application of relevant concepts |
 
+You can use [this presentation template](https://github.com/IdeasClinicUWaterloo/S26-Toyota-Innovation-Challenge/blob/e8504ff57e24840520e95d34c7cf6f4edc05faa9/Presentation/Toyota%20Innovation%20ChallengeMechanical_StudentPresentationTemplate.pptx)
 
 ## Schedule
 
