@@ -6,7 +6,7 @@ Created By: Engineering IDEAs Clinic Co-op Students
 
 ## Quick Links
 
-[Fault Prediction](/Fault_Prediction), [Autonomous Fleet Coordination](/Autonomous_Fleets), [Collaborative Robotics](/Collaborative_Robotics)
+[Fault Prediction](/Fault_Prediction), [Autonomous Fleet Coordination](/Autonomous_Fleets), [Collaborative Robotics](/Collaborative_Robotics), [Presentation and Submission](/Presentation_and_Submission)
 
 # Your Mission
 
@@ -76,17 +76,8 @@ Resources and Kit information can be found in the folders for the respective sub
 
 To sign out a kit, go to the sign out table and speak to a coop. You will have to go through safety training for some of the kits.
 
-# Rubric
-You will be evaluated based on the following equally-weighted criteria. Please use these to guide your development decisions:
-
-| Category           | Criteria                                                                 |
-|-------------------|--------------------------------------------------------------------------|
-| **Ideation**       | Relevance, feasibility, innovation, impact                              |
-| **Execution**      | Functionality, quality of prototype, ease of use                        |
-| **Safety**         | Little to no risk to user; meets Canadian safety regulations            |
-| **Human Centricity** | How does this help humans?                                            |
-| **Presentation**   | Clearly explained; depth of knowledge; application of relevant concepts |
-
+# Presentation & Submission
+Please find details about the rubric, presentation and submission [here](/Presentation_and_Submission).
 
 ## Schedule
 
