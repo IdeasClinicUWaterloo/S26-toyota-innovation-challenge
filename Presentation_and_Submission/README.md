@@ -31,3 +31,5 @@ You may use [this presentation template](https://github.com/IdeasClinicUWaterloo
 | 3:00 PM | 33 | 32 | 24 | 10 | 14 | 1 |
 | 3:15 PM | 5 | 26 | 20 | - | 34 | 2 |
 | 3:30 PM | 6 | 30 | - | 21 | 30 | - |
+
+Also refer to [this PDF](https://github.com/IdeasClinicUWaterloo/S26-Toyota-Innovation-Challenge/blob/41a201ae335730453311d126ef91cdefc3d414f4/Presentation_and_Submission/S26%20TIC%20Judging%20Plan.pdf).
