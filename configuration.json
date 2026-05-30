@@ -1,0 +1,40 @@
+{
+  "camera_index": 1,
+  "min_area": 100,
+  "show_debug_windows": false,
+  "red": {
+    "range1": {
+      "lh": 0,
+      "ls": 170,
+      "lv": 120,
+      "uh": 12,
+      "us": 255,
+      "uv": 255
+    },
+    "range2": {
+      "lh": 175,
+      "ls": 40,
+      "lv": 251,
+      "uh": 180,
+      "us": 0,
+      "uv": 255
+    }
+  },
+  "blue": {
+    "lh": 40,
+    "ls": 70,
+    "lv": 60,
+    "uh": 100,
+    "us": 140,
+    "uv": 110
+  },
+  "grey": {
+    "lh": 25,
+    "ls": 125,
+    "lv": 60,
+    "uh": 50,
+    "us": 190,
+    "uv": 130
+  },
+  "focal_length_px": 800
+}
