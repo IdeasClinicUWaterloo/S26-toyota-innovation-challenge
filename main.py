@@ -5,6 +5,15 @@ from enum import Enum
 import json
 import os
 import time
+import collections
+
+try:
+    from openni import openni2
+    from openni import _openni2 as c_api
+    _OPENNI_AVAILABLE = True
+except ImportError:
+    _OPENNI_AVAILABLE = False
+    print("openni package not found — depth disabled. Install with: pip install openni")
 
 
 # -----------------------------
@@ -304,6 +313,43 @@ def classify_gesture(fingers):
 
 
 # -----------------------------
+# Depth helpers
+# -----------------------------
+
+_depth_window: collections.deque = collections.deque(maxlen=5)
+
+
+def read_depth_frame() -> np.ndarray | None:
+    if depth_stream is None:
+        return None
+    frame = depth_stream.read_frame()
+    if frame is None:
+        return None
+    buf = frame.get_buffer_as_uint16()
+    return np.frombuffer(buf, dtype=np.uint16).reshape((DEPTH_HEIGHT, DEPTH_WIDTH)).copy()
+
+
+def sample_palm_depth(depth_frame: np.ndarray, cx: int, cy: int, radius: int = 8) -> float | None:
+    x0 = max(0, cx - radius)
+    y0 = max(0, cy - radius)
+    x1 = min(depth_frame.shape[1], cx + radius + 1)
+    y1 = min(depth_frame.shape[0], cy + radius + 1)
+    valid = depth_frame[y0:y1, x0:x1]
+    valid = valid[valid > 0]
+    if valid.size == 0:
+        return None
+    return float(np.median(valid)) / 1000.0  # mm → metres
+
+
+def smoothed_depth(raw_m: float | None) -> float | None:
+    if raw_m is not None:
+        _depth_window.append(raw_m)
+    if not _depth_window:
+        return None
+    return float(np.median(list(_depth_window)))
+
+
+# -----------------------------
 # Colour detection helpers
 # -----------------------------
 
@@ -399,6 +445,40 @@ if not cap.isOpened():
 
 
 # -----------------------------
+# Orbbec Astra depth stream setup
+# -----------------------------
+
+DEPTH_WIDTH  = 640
+DEPTH_HEIGHT = 480
+DEPTH_FPS    = 30
+
+depth_stream = None
+
+if _OPENNI_AVAILABLE:
+    try:
+        openni2.initialize(r"C:\Orbbec\OpenNI2\OpenNI_2.3.0.86_202210111950_4c8f5aa4_beta6_windows\Win64-Release\sdk\libs")
+        _dev = openni2.Device.open_any()
+        try:
+            _dev.set_image_registration_mode(openni2.IMAGE_REGISTRATION_DEPTH_TO_COLOR)
+            print("Depth-to-colour registration enabled.")
+        except Exception as _reg_err:
+            print(f"Registration not supported on this firmware, skipping: {_reg_err}")
+            print("Depth values will still work — palm XY may be off by ~1–2 cm at close range.")
+        depth_stream = _dev.create_depth_stream()
+        depth_stream.set_video_mode(c_api.OniVideoMode(
+            pixelFormat = c_api.OniPixelFormat.ONI_PIXEL_FORMAT_DEPTH_1_MM,
+            resolutionX = DEPTH_WIDTH,
+            resolutionY = DEPTH_HEIGHT,
+            fps         = DEPTH_FPS,
+        ))
+        depth_stream.start()
+        print("Orbbec Astra depth stream started.")
+    except Exception as e:
+        print(f"Could not open Orbbec depth stream: {e}")
+        depth_stream = None
+
+
+# -----------------------------
 # MediaPipe setup
 # -----------------------------
 
@@ -440,7 +520,8 @@ cv2.setMouseCallback(PANEL_WIN, _panel.on_mouse)
 # State
 # -----------------------------
 
-palm_center = None
+palm_center  = None
+palm_depth_m = None
 
 _panel_w, _panel_h = 460, 740  # last known panel dimensions
 
@@ -463,6 +544,9 @@ while True:
     frame = cv2.flip(frame, 1)
     display_frame = frame.copy()
 
+    # ---- Depth frame ----
+    depth_frame_data = read_depth_frame()
+
     # ---- Hand & palm detection ----
 
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -472,7 +556,8 @@ while True:
 
     hand_detected = False
     current_gesture_output = "None"
-    palm_center = None
+    palm_center  = None
+    palm_depth_m = None
 
     if results.multi_hand_landmarks and results.multi_handedness:
         hand_detected = True
@@ -513,9 +598,40 @@ while True:
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
 
             cv2.circle(display_frame, palm_center, 8, (0, 255, 255), -1)
-            cv2.putText(display_frame, f"Palm: {palm_center}",
-                        (palm_center[0] + 10, palm_center[1] - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
+
+            if depth_frame_data is not None:
+                raw_d        = sample_palm_depth(depth_frame_data, *palm_center)
+                palm_depth_m = smoothed_depth(raw_d)
+
+            if palm_depth_m is not None:
+                if palm_depth_m < 0.60:
+                    depth_col = (0, 255, 80)
+                elif palm_depth_m < 1.00:
+                    depth_col = (0, 200, 255)
+                else:
+                    depth_col = (60, 60, 255)
+                cv2.putText(display_frame,
+                            f"Palm: {palm_center}  |  {palm_depth_m:.3f} m",
+                            (palm_center[0] + 10, palm_center[1] - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, depth_col, 2)
+                _bar_max_m = 2.0
+                _frac      = min(1.0, palm_depth_m / _bar_max_m)
+                _bar_top   = y_min - 20
+                _bar_bot   = y_max + 20
+                _fill_y    = int(_bar_bot - _frac * (_bar_bot - _bar_top))
+                cv2.rectangle(display_frame,
+                              (x_max + 25, _bar_top), (x_max + 35, _bar_bot),
+                              (50, 50, 50), -1)
+                cv2.rectangle(display_frame,
+                              (x_max + 25, _fill_y), (x_max + 35, _bar_bot),
+                              depth_col, -1)
+                cv2.putText(display_frame, f"{palm_depth_m:.2f}m",
+                            (x_max + 38, _bar_bot),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.38, depth_col, 1)
+            else:
+                cv2.putText(display_frame, f"Palm: {palm_center}  |  depth n/a",
+                            (palm_center[0] + 10, palm_center[1] - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
 
     # ---- Colour detection — always runs, all colours simultaneously ----
 
@@ -558,7 +674,10 @@ while True:
 
     active_lines = []
     if hand_detected:
-        active_lines.append((f"Hand: {current_gesture_output} | Palm {palm_center}", (0, 220, 0)))
+        _d_str = f"{palm_depth_m:.3f} m" if palm_depth_m is not None else "depth n/a"
+        active_lines.append(
+            (f"Hand: {current_gesture_output} | Palm {palm_center} | {_d_str}", (0, 220, 0))
+        )
     if red_detected:
         active_lines.append((f"Red  x{len(red_centers)}: {red_centers}", (60, 60, 255)))
     if blue_detected:
@@ -645,4 +764,11 @@ while True:
 
 cap.release()
 hands.close()
+if depth_stream is not None:
+    depth_stream.stop()
+if _OPENNI_AVAILABLE:
+    try:
+        openni2.unload()
+    except Exception:
+        pass
 cv2.destroyAllWindows()
