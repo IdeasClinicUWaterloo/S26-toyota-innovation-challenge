@@ -1,5 +1,6 @@
 # You Must Prepare:
 - 7 minute presentation for the judges (+ 3-minute Q&A session)
+  - Please prepare a video of your solution working as a back-up plan for difficulties doing a live demo during judging.
 - 3 minute video about your solution, uploaded to Youtube as an unlisted video
   - There is no strict format, but try to summarize your solution to the best of your ability.
 - PDF file of your presentation slides
