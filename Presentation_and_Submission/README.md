@@ -23,7 +23,7 @@ You may use [this presentation template](https://github.com/IdeasClinicUWaterloo
 # Presentation Schedule
 | Time | Judges #1 | Judges #2 | Judges #3 | Judges #4 | Judges #5 | Judges #6 |
 |-|-|-|-|-|-|-|
-Please refer to [this PDF](https://github.com/IdeasClinicUWaterloo/S26-Toyota-Innovation-Challenge/blob/eac31e8cbe33ad4bbda315a4fa4d0555366f23f5/Presentation_and_Submission/S26%20TIC%20Judging%20Plan.pdf).
+| 2:30 PM | 8 | 27 | 17 | 31 | 12 | 3 |
 
 # Submission
 Please submit your presentation slides as a PDF file along with a 3 minute unlisted Youtube video link to [this form](https://forms.cloud.microsoft/r/Gn6XDvu6zx) by 2:30 PM Sunday.
