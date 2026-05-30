@@ -6,7 +6,7 @@ Created By: Engineering IDEAs Clinic Co-op Students
 
 ## Quick Links
 
-[Fault Prediction](/Fault_Prediction), [Autonomous Fleet Coordination](/Autonomous_Fleets), [Collaborative Robotics](/Collaborative_Robotics), [Rubric & Presentation](/Rubric_&_Presentation)
+[Fault Prediction](/Fault_Prediction), [Autonomous Fleet Coordination](/Autonomous_Fleets), [Collaborative Robotics](/Collaborative_Robotics), [Presentation and Submission](/Presentation_and_Submission)
 
 # Your Mission
 
