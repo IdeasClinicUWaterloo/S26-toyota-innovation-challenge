@@ -26,10 +26,10 @@ You may use [this presentation template](https://github.com/IdeasClinicUWaterloo
 # Presentation Schedule
 | Time | Judges #1 | Judges #2 | Judges #3 | Judges #4 | Judges #5 | Judges #6 |
 |-|-|-|-|-|-|-|
-| 2:30 PM | 8 | 27 | 17 | 31 | 12 | 3 |
-| 2:45 PM | 7 | 13 | 23 | 18 | - | 4 |
+| 2:30 PM | 8 | - | 17 | 31 | 12 | 3 |
+| 2:45 PM | - | 13 | 23 | 18 | - | 4 |
 | 3:00 PM | 33 | 32 | 24 | 10 | 14 | 1 |
-| 3:15 PM | 5 | 26 | 20 | - | 34 | 2 |
-| 3:30 PM | 6 | 30 | - | 21 | 30 | - |
+| 3:15 PM | 5 | 26 | 20 | - | 34 | - |
+| 3:30 PM | 6 | 30 | - | 21 | 29 | - |
 
 Also refer to [this PDF](https://github.com/IdeasClinicUWaterloo/S26-Toyota-Innovation-Challenge/blob/41a201ae335730453311d126ef91cdefc3d414f4/Presentation_and_Submission/S26%20TIC%20Judging%20Plan.pdf).
